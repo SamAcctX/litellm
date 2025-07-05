@@ -19,7 +19,7 @@ import {
 } from "./email_events/types";
 
 const isLocal = process.env.NODE_ENV === "development";
-export const defaultProxyBaseUrl = isLocal ? "http://localhost:43845" : null;
+export const defaultProxyBaseUrl = isLocal ? "http://localhost:4000" : null;
 const defaultServerRootPath = "/";
 export let serverRootPath = defaultServerRootPath;
 export let proxyBaseUrl = defaultProxyBaseUrl;
@@ -4889,18 +4889,28 @@ export const listMCPTools = async (accessToken: string, serverId: string) => {
       },
     });
 
+    const data = await response.json();
+    console.log("Fetched MCP tools response:", data);
+
     if (!response.ok) {
-      const errorData = await response.text();
-      handleError(errorData);
-      throw new Error("Network response was not ok");
+      // If the server returned an error response, use it
+      if (data.error && data.message) {
+        throw new Error(data.message);
+      }
+      // Otherwise use a generic error
+      throw new Error("Failed to fetch MCP tools");
     }
 
-    const data = await response.json();
-    console.log("Fetched MCP tools:", data);
+    // Return the full response object which includes tools, error, and message
     return data;
   } catch (error) {
     console.error("Failed to fetch MCP tools:", error);
-    throw error;
+    // Return an error response in the same format as the API
+    return {
+      tools: [],
+      error: "network_error",
+      message: error instanceof Error ? error.message : "Failed to fetch MCP tools"
+    };
   }
 };
 
