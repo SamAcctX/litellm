@@ -6,14 +6,13 @@ model_list:
     litellm_params:
       model: openai/*
 
-router_settings:
-  model_group_alias: {
-    "gemini-2.5-pro": "anthropic/claude-sonnet-4-20250514",
-    "gemini-2.5-flash": "anthropic/claude-sonnet-4-20250514",
-    # "gemini-2.5-pro": "openai/gpt-4o-mini"
-  }
+guardrails:
+  - guardrail_name: "bedrock-pre-guard"
+    litellm_params:
+      guardrail: bedrock  # supported values: "aporia", "bedrock", "lakera"
+      mode: "during_call"
+      guardrailIdentifier: ff6ujrregl1q
+      guardrailVersion: "DRAFT"
 
-mcp_servers:
-  deepwiki_mcp:
-    url: "https://mcp.deepwiki.com/mcp"
-    transport: "http"
+litellm_settings:
+  callbacks: ["datadog_llm_observability"]

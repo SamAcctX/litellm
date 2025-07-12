@@ -89,6 +89,7 @@ class BaseAnthropicMessagesConfig(ABC):
         optional_params: dict,
         request_data: dict,
         api_base: str,
+        api_key: Optional[str] = None,
         model: Optional[str] = None,
         stream: Optional[bool] = None,
         fake_stream: Optional[bool] = None,
@@ -114,6 +115,8 @@ class BaseAnthropicMessagesConfig(ABC):
     def get_error_class(
         self, error_message: str, status_code: int, headers: Union[dict, httpx.Headers]
     ) -> "BaseLLMException":
+        from litellm.llms.base_llm.chat.transformation import BaseLLMException
+
         return BaseLLMException(
             message=error_message, status_code=status_code, headers=headers
         )
